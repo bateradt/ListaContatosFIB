@@ -66,7 +66,6 @@ fun update(contato: Contato) = context.database.use {
             .whereArgs("id = {id}","id" to contato.id).exec()
 
     //Timber.d("Update result code is $updateResult")
-
 }
 
 fun delete(id: Long) = context.database.use {

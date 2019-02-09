@@ -1,9 +1,15 @@
 package com.br.estudo.marcelo.listacontatosfib
 
+import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.DatePicker
@@ -13,6 +19,7 @@ import com.br.estudo.marcelo.bancodadosutil.constantes.dateFormatter
 import com.br.estudo.marcelo.bean.Contato
 import com.br.estudo.marcelo.repositorio.ContatoRepository
 import kotlinx.android.synthetic.main.activity_contato.*
+import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -28,6 +35,9 @@ class ContatoActivity : AppCompatActivity() {
     private var vBtnCadastro: Button? = null
     private var vEdtEmail: EditText? = null
     private var contato: Contato? = null
+    private val localArquivoFoto: String? = null;
+    val REQUEST_IMAGE_CAPTURE = 1;
+    private var mCurrentPhotoPath: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,6 +82,10 @@ class ContatoActivity : AppCompatActivity() {
         vEdtEmail = txtEmail
         vBtnCadastro = btnCadastro
 
+        vImageContato?.setOnClickListener{
+            dispatchTakePictureIntentSimple();
+        }
+
         vBtnCadastro?.setOnClickListener {
             contato?.nome = txtNome?.text.toString()
             contato?.endereco = txtEndereco?.text.toString()
@@ -80,13 +94,27 @@ class ContatoActivity : AppCompatActivity() {
             contato?.dataNascimento = date.time
             contato?.email = txtEmail?.text.toString()
             contato?.site = txtSite?.text.toString()
-
+            contato?.foto = mCurrentPhotoPath
             if(contato?.id == 0L) {
                 ContatoRepository(this).create(contato!!)
             }else{
                 ContatoRepository(this).update(contato!!)
             }
+
             finish()
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
+            val extras = data?.extras
+            val imageBitmap = extras!!.get("data") as Bitmap
+            imgContato.setImageBitmap(imageBitmap)
+            try {
+                this.storeImage(imageBitmap)
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
         }
     }
 
@@ -115,12 +143,74 @@ class ContatoActivity : AppCompatActivity() {
                 txtEmail.setText(contato?.email)
                 txtSite?.setText(contato?.site)
 
+                if(contato?.foto != null){
+                    readBitmapFile(contato?.foto!!);
+                    mCurrentPhotoPath = contato?.foto
+                }
+
             }else{
                 contato = Contato()
             }
         }
-
     }
+
+    private fun dispatchTakePictureIntentSimple() {
+        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        if (takePictureIntent.resolveActivity(packageManager) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+        }
+    }
+
+    @Throws(IOException::class)
+    private fun storeImage(image: Bitmap) {
+
+        val pictureFile = createImageFile()
+        if (pictureFile == null) {
+            Log.d("ERRO", "Error creating media file, check storage permissions: ")// e.getMessage());
+            return
+        }
+        try {
+            val fos = FileOutputStream(pictureFile)
+            image.compress(Bitmap.CompressFormat.PNG, 90, fos)
+            fos.close()
+        } catch (e: FileNotFoundException) {
+            Log.d("ERRO", "File not found: " + e.message)
+        } catch (e: IOException) {
+            Log.d("ERRO", "Error accessing file: " + e.message)
+        }
+    }
+
+
+    @Throws(IOException::class)
+    private fun createImageFile(): File {
+        // Create an image file name
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val imageFileName = "JPEG_" + timeStamp + "_"
+        val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        val image = File.createTempFile(
+                imageFileName, /* prefix */
+                ".jpg", /* suffix */
+                storageDir      /* directory */
+        )
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = image.getAbsolutePath()
+        return image
+    }
+
+    private fun readBitmapFile(path: String) {
+        var bitmap: Bitmap? = null
+        val f = File(path)
+        val options = BitmapFactory.Options()
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888
+
+        try {
+            bitmap = BitmapFactory.decodeStream(FileInputStream(f), null, options)
+        } catch (e: FileNotFoundException) {
+            e.printStackTrace()
+        }
+        vImageContato?.setImageBitmap(bitmap)
+    }
+
 
 
 }

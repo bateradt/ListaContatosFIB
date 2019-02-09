@@ -6,15 +6,13 @@ import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.StaggeredGridLayoutManager
+//import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.ContextMenu
-import android.widget.ArrayAdapter
 import kotlinx.android.synthetic.main.activity_lista_contatos.*
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import com.br.estudo.marcelo.bean.Contato
 import com.br.estudo.marcelo.repositorio.ContatoRepository
@@ -36,13 +34,14 @@ class ListaContatosActivity : AppCompatActivity() {
         //val adapter
         //        = ArrayAdapter(this, android.R.layout.simple_list_item_1, contatos)
 
-        // var listaContatos = lista
+        //var listaContatos = lista
         //listaContatos.setAdapter(adapter);
 
         //contatos = ContatoRepository(this).findAll()
         //val adapter= ArrayAdapter(this, android.R.layout.simple_list_item_1, contatos)
         //lista?.adapter = adapter
         //adapter.notifyDataSetChanged()
+
         carregaLista();
 
         /*//lista.
@@ -56,8 +55,6 @@ class ListaContatosActivity : AppCompatActivity() {
             contatoSelecionado = contatos?.get(posicao)
             false
         }*/
-
-
     }
 
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenu.ContextMenuInfo) {
@@ -85,6 +82,7 @@ class ListaContatosActivity : AppCompatActivity() {
 
     private fun carregaLista() {
         contatos = ContatoRepository(this).findAll()
+        /*
         val recyclerView = contato_list_recyclerview
         recyclerView.adapter = ListaRecyclerAdapter(contatos!!,
                 { contato : Contato -> contatoClicked(contato) },
@@ -92,11 +90,11 @@ class ListaContatosActivity : AppCompatActivity() {
                 this)
         //val layoutManager = LinearLayoutManager(this)
         val layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        recyclerView.layoutManager = layoutManager
+        recyclerView.layoutManager = layoutManager*/
 
-        //val adapter= ArrayAdapter(this, android.R.layout.simple_list_item_1, contatos)
-        //lista?.adapter = adapter
-        //adapter.notifyDataSetChanged()
+        val adapter= ArrayAdapter(this, android.R.layout.simple_list_item_1, contatos)
+        lista?.adapter = adapter
+        adapter.notifyDataSetChanged()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -135,12 +133,12 @@ class ListaContatosActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        carregaLista()
-        //registerForContextMenu(contato_list_recyclerview)
-        //contatos = ContatoRepository(this).findAll()
-        //val adapter= ArrayAdapter(this, android.R.layout.simple_list_item_1, contatos)
-        //lista?.adapter = adapter
-        //adapter.notifyDataSetChanged()
+        //carregaLista()
+        registerForContextMenu(lista)
+        contatos = ContatoRepository(this).findAll()
+        val adapter= ArrayAdapter(this, android.R.layout.simple_list_item_1, contatos)
+        lista?.adapter = adapter
+        adapter.notifyDataSetChanged()
     }
 
     private fun contatoClicked(contato : Contato) {
@@ -150,7 +148,7 @@ class ListaContatosActivity : AppCompatActivity() {
     }
 
     private fun contatoLongClicked(contato: Contato): Boolean {
-        contatoSelecionado = contato
+        /*contatoSelecionado = contato
         //Toast.makeText(this, "CLick longo. Nome: " + contato?.nome, Toast.LENGTH_LONG).show()
         AlertDialog.Builder(this@ListaContatosActivity)
                 .setIcon(android.R.drawable.ic_dialog_alert)
@@ -161,7 +159,9 @@ class ListaContatosActivity : AppCompatActivity() {
                             ContatoRepository(this).delete(this.contatoSelecionado!!.id)
                             carregaLista()
                         }).setNegativeButton("Nao", null).show()
-        return true
+        return true}*/
+
+        return true;
     }
 
 

@@ -2,11 +2,9 @@ package com.br.estudo.marcelo.listacontatosfib
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import com.br.estudo.marcelo.bean.Contato
 import kotlinx.android.synthetic.main.linha.view.*
+import android.view.*
 
 class ListaRecyclerAdapter(private val contatos: List<Contato>, val clickListener: (Contato) -> Unit,
                            val longClickListener: (Contato) -> Boolean,

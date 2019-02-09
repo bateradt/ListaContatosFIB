@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/excluir"
         android:title="Excluir"/>
+    <item
+        android:id="@+id/envemail"
+        android:title="Enviar por e-mail"/>
+    <item
+        android:id="@+id/envwhatsapp"
+        android:title="Enviar por whatsapp"/>
 </menu>

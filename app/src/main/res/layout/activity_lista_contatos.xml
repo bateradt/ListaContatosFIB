@@ -11,18 +11,18 @@
         android:background="@android:color/holo_orange_dark"
         android:minHeight="?attr/actionBarSize"
         android:titleTextColor="@color/colorAccent" />
-
+<!--
     <android.support.v7.widget.RecyclerView
         android:id="@+id/contato_list_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+    -->
 
-    <!--
     <ListView
         android:id="@+id/lista"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" >
     </ListView>
-    !-->
+
 
 </LinearLayout>
